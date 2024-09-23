@@ -1,1 +1,29 @@
-
+import time
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+driver= webdriver.Chrome(service=Service(executable_path=r"D:\chromedriver.exe"))
+driver.get(" https://www.saucedemo.com/")
+driver.find_element(By.ID, "user-name").send_keys("standard_user")
+driver.find_element(By.ID, "password").send_keys("secret_sauce")
+driver.find_element(By.ID, "login-button").click()
+#Verify Z-A sorting
+driver.find_element(By.CLASS_NAME, "product_sort_container").click()
+driver.find_element(By.XPATH, "//option[text()='Z to A']").click()
+time.sleep(20)
+#Verify the order of items
+driver.find_element(By.CLASS_NAME, "product_sort_container").click()
+driver.find_element(By.XPATH, "//option[text()='Price (high to low)']").click()
+#Verify the order of prices
+prices = driver.find_elements(By.CLASS_NAME, "inventory_item_price")
+item_prices = [float(price.text.replace('$', '')) for price in prices]
+if item_prices == sorted(item_prices, reverse=True):
+    print("High-Low price sorting verified.")
+else:
+    print("High-Low price sorting failed.")
+#Add multiple Item
+items_to_add = 2
+for i in range(items_to_add):
+    driver.find_elements(By.CLASS_NAME, "btn_primary")[i].click()
+time.sleep(20)
+driver.quit()
